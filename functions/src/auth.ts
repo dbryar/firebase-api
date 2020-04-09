@@ -6,7 +6,7 @@
 // import dependencies
 import * as admin from 'firebase-admin';
 import { Request, Response } from 'express';
-import { isJSON, respond } from './func';
+import { respond } from './func';
 
 const express = require('express');
 const router = express.Router();
@@ -47,11 +47,12 @@ router.get('/', async (req:Request,res:Response) => {
       });
     });
   } catch (error) {
-    if(isJSON(error)) {
-      return respond(res, error);
-    } else {
+    try {
+      JSON.parse(error.message);
+      return respond(res, JSON.parse(error.message));
+    } catch {
       return respond(res, {
-        code:400,
+        code:500,
         message: `${error}`,
         trace: `AL:006`
       });

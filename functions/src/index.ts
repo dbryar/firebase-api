@@ -35,15 +35,16 @@ const resolvers = {
 
 // define Express.js as the main app
 const app = express();
+const api = express();
 const main = express();
 
-// define our enpoint base, and set the parser for JSON
-main.use('/api/v1', app);
+// define our API enpoint base, and set the parser for JSON
+main.use('/api/v1', api);
 main.use(bodyParser.json());
 
 // define our Apollo GraphQL endpoint
 const apollo = new ApolloServer({ typeDefs, resolvers, introspection: true, playground: true });
-apollo.applyMiddleware({ app, path: "/graphql", cors: true });
+apollo.applyMiddleware({ app, path: "/", cors: true });
 exports.graphql = functions.https.onRequest(app);
 
 // define the app as a cloud funtion called webApi (referenced in firebase.json)
@@ -53,10 +54,10 @@ export const webApi = functions.https.onRequest(main);
 //app.use(cors({ origin: true }));
 
 // test endpoint for confirming connectivity
-app.get('/ready', (res:Response) => {
+api.get('/ready', (res:Response) => {
     res.send('API is active.');
 });
 
 // authentication router
 const authRouter = require('./auth');
-app.use('/auth', authRouter);
+api.use('/auth', authRouter);

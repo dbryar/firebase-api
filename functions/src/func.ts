@@ -55,33 +55,22 @@ export async function isAuth(req:Request,res:Response) {
     admin.auth().verifyIdToken(idToken)
     .then(function(decodedToken) {
       res.locals = { ...res.locals, uid:decodedToken.uid };
-      return res;
+      return true;
     })
     .catch(function(error) {
       throw new Error(JSON.stringify({code:401,message:`Error ${error}`,trace:'GA.007'}));
     });
 
   } catch (error) {
-    if(isJSON(error.message)) {
+    try {
+      JSON.parse(error.message);
       return respond(res, JSON.parse(error.message));
-    } else {
+    } catch {
       return respond(res, error.message);
     }
   }
-  return res;
+  return;
 }
-
-
-// simple Boolean function to test JSON validity submitted to endpoints
-export function isJSON(json:string) {
-  try {
-    JSON.parse(json);
-    return true;
-  } catch (err) {
-    return false;
-  }
-}
-
 
 // *** TO DO *** profanity filter of user entered data
 export function isClean(data:any) {
