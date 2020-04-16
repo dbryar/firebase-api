@@ -1,7 +1,8 @@
 import * as admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
 import * as bodyParser from 'body-parser';
-import { Response } from 'express';
+//import * as cors from 'cors';
+import { Request, Response } from 'express';
 
 admin.initializeApp(functions.config().firebase);
 
@@ -10,7 +11,7 @@ console.log('Ready for requests');
 const express = require('express');
 const { ApolloServer, gql } = require('apollo-server-express');
 const typeDefs = gql`
-  type FormData {
+  type Submission {
     submittedBy: String
     isComplete: Boolean
     modified: String
@@ -18,18 +19,24 @@ const typeDefs = gql`
     formData: String
   }
   type Query {
-    submission: [FormData]
+    Submissions: [Submission]
   }
 `;
+const subData = admin
+  .firestore()
+  .collection('submissions');
 const resolvers = {
   Query: {
-    submission: () =>
-      admin
-        .database()
-        .ref("submission")
-        .once("value")
-        .then(snap => snap.val())
-        .then(val => Object.keys(val).map(key => val[key]))
+    Submissions: () =>
+      subData.get().then(function(snapshot) {
+        const subArr:any = [];
+        snapshot.forEach((doc) => {
+          const sub = doc.data();
+          sub.id = doc.id;
+          subArr.push(sub);
+        })
+        return subArr;
+      })
   }
 };
 
@@ -41,6 +48,7 @@ const main = express();
 // define our API enpoint base, and set the parser for JSON
 main.use('/api/v1', api);
 main.use(bodyParser.json());
+//main.use(cors({ origin:true }));
 
 // define our Apollo GraphQL endpoint
 const apollo = new ApolloServer({ typeDefs, resolvers, introspection: true, playground: true });
@@ -54,10 +62,10 @@ export const webApi = functions.https.onRequest(main);
 //app.use(cors({ origin: true }));
 
 // test endpoint for confirming connectivity
-api.get('/ready', (res:Response) => {
-    res.send('API is active.');
+api.get('/ready', (req:Request,res:Response) => {
+    res.send(`API is active.`);
 });
 
 // authentication router
-const authRouter = require('./auth');
-api.use('/auth', authRouter);
+const postRouter = require('./post');
+api.use('/post', postRouter);

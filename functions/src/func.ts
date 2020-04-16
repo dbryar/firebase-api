@@ -35,12 +35,12 @@ export function respond(res:Response, msg:any) {
 
 
 // return authorised and verified JWT assertion
-export async function isAuth(req:Request,res:Response) {
-
-  // get headers and check for JWT bearer token
-  const { authorization } = req.headers
+export function isAuth(req:Request,res:Response,next:Function) {
 
   try {
+    // get headers and check for JWT bearer token
+    const { authorization } = req.headers
+
     if (!authorization) throw new Error(JSON.stringify({code:401,message:`Unauthorized`,trace:'GA.003'}));
     if (!authorization.startsWith('Bearer')) throw new Error(JSON.stringify({code:401,message:`Unauthorized`,trace:'GA.004'}));
     if (authorization.split('Bearer ').length !== 2) throw new Error(JSON.stringify({code:401,message:`Unauthorized`,trace:'GA.005'}));
@@ -55,21 +55,20 @@ export async function isAuth(req:Request,res:Response) {
     admin.auth().verifyIdToken(idToken)
     .then(function(decodedToken) {
       res.locals = { ...res.locals, uid:decodedToken.uid };
-      return true;
+      return next();
     })
     .catch(function(error) {
-      throw new Error(JSON.stringify({code:401,message:`Error ${error}`,trace:'GA.007'}));
+      return respond(res, {code:401,message:'Token Error',data:`${error.message}`,trace:'GA.007'})
     });
-
   } catch (error) {
     try {
       JSON.parse(error.message);
       return respond(res, JSON.parse(error.message));
     } catch {
-      return respond(res, error.message);
+      return respond(res, error.message)
     }
   }
-  return;
+  return false;
 }
 
 // *** TO DO *** profanity filter of user entered data
