@@ -69,19 +69,19 @@ async function create(req:Request,res:Response) {
 
 async function retrieve(req:Request,res:Response) {
 
-  const formName = req.params.form.replace(/-/g, ' ');
+  const formName = req.params.form
   let response: { [key:string] :any } = {};
   let message = `no data`;
 
   try {
     if(!formName) throw new Error(JSON.stringify({code:400,message:`Must include '/formName' in request`,trace:'PR.003'}));
     if(formName.length < 3) throw new Error(JSON.stringify({code:400,message:`Must include '/formName' in request`,trace:'PR.004'}));
-    console.log(`Looking for last incomplete '${formName}' submitted by '${res.locals.uid}'`)
+    console.log(`Looking for last incomplete '${formName.replace(/-/g, ' ')}' submitted by '${res.locals.uid}'`)
     const db = admin.firestore();
     db.collection("submissions")
     .where('submittedBy','==', res.locals.uid)
     .where('isComplete','==','false')
-    .where('formName', '==', formName)
+    .where('formName', '==', formName.replace(/-/g, ' '))
     .orderBy('modified','desc')
     .limit(1)
     .get()
