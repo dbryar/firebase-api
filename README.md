@@ -1,7 +1,19 @@
-# firebase-api
+# firebase-API
+## Boilerplate for cloud function (node.js) and Firestore 
 
-Use firebase Auth to get a JWT from OAuth provider
-Sent JWT as a Bearer Token to /api/v1/post, with the following valid actions
+- Requires a Firestore collection named "submissions" and a multi-field index. 
+- Use the API error message on a GET request to create the index automatically.
+- Clone to directory, and 
+```
+cd /functions/src
+npm i
+firebase deploy
+```
+
+## Usage
+Use firebase Auth to get a JWT from OAuth provider.
+
+Send JWT as a Bearer Token to /api/v1/post, with the following valid actions
 
 ### GET /ready
 The API simply responds if active
