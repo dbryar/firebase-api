@@ -11,7 +11,7 @@ export function respond(res:Response, msg:any) {
     if(msg.code >= 300) {
       // log errors to the console
       log = true;
-      json.status = `Response code: ${msg.code}`;
+      json.status = `${msg.code}`;
     }
     if(msg.trace) json.trace = `Response ID: ${msg.trace}`;
     json.message = msg.message;
