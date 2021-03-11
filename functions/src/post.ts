@@ -25,7 +25,7 @@ async function create(req:express.Request,res:express.Response) {
   const data = req.body;
   try {
     if(!data.submittedBy) throw new Error(JSON.stringify({code:400,message:`Must include 'submittedBy (string)' field`,trace:'PC.002'}));
-    if(typeof(data.isComplete)!=="boolean") throw new Error(JSON.stringify({code:400,message:`Must include 'isComplete (bool)' field`,trace:'PC.003'}));
+    if(!data.isComplete) throw new Error(JSON.stringify({code:400,message:`Must include 'isComplete (string)' field`,trace:'PC.003'}));
     if(!data.formName) throw new Error(JSON.stringify({code:400,message:`Must include 'formName (string)' field`,trace:'PC.004'}));
     if(!data.formData) throw new Error(JSON.stringify({code:400,message:`Must include 'formData (JSON)' `,trace:'PC.005'}));
     if(res.locals.uid !== data.submittedBy) throw new Error(JSON.stringify({code:401,message:`UID does not match (${res.locals.uid})`,trace:'PC.006'}));
@@ -151,7 +151,7 @@ async function update(req:express.Request,res:express.Response) {
   try {
     if(!docId) throw new Error(JSON.stringify({code:400,message:`Must include 'docID (string)' from past response in PUT request`,trace:'PU.002'}));
     if(!data.submittedBy) throw new Error(JSON.stringify({code:400,message:`Must include 'submittedBy (string)' field`,trace:'PU.003'}));
-    if(typeof(data.isComplete)!=="boolean") throw new Error(JSON.stringify({code:400,message:`Must include 'isComplete (bool)' field`,trace:'PU.004'}));
+    if(!data.isComplete) throw new Error(JSON.stringify({code:400,message:`Must include 'isComplete (string)' field`,trace:'PU.004'}));
     if(!data.formName) throw new Error(JSON.stringify({code:400,message:`Must include 'formName (string)' field`,trace:'PU.005'}));
     if(!data.formData) throw new Error(JSON.stringify({code:400,message:`Must include 'formData (JSON)' `,trace:'PU.006'}));
     if(res.locals.uid !== data.submittedBy) throw new Error(JSON.stringify({code:401,message:`UID does not match (${res.locals.uid})`,trace:'PU.007'}));
@@ -172,7 +172,10 @@ async function update(req:express.Request,res:express.Response) {
       return respond(res, {
         code:200,
         message: `success`,
-        data: data.formData
+        data: {
+          id: docId,
+          formData: data.formData
+        }
       })
     }).catch(function(error){
       throw new Error(JSON.stringify({code:500,message:`Firestore Error`,trace:'PU.001',data:error}));

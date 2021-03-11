@@ -78,12 +78,9 @@ const corsOptions = {
 
 // define our API enpoint base, and set the parser for JSON
 main.use('/api/v1', api);
-main.use(bodyParser.json());
-//main.use(cors({ origin:true }));
-
-// Add CORS to all requests from here on
 api.options('*', cors(corsOptions)) // handle any pre-flight CORS checks
 api.use(cors(corsOptions))
+api.use(bodyParser.json());
 
 // // define our Apollo GraphQL endpoint
 // const apollo = new ApolloServer({ typeDefs, resolvers, introspection: true, playground: true });
