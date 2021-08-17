@@ -50,7 +50,7 @@ const cors = require('cors')
 // Allow cross-origin requests from authorised domains
 const allowlist = [
   'http://localhost:8080',
-  'https://innovate-noosa.firebaseapp.com/',
+  'https://innovate-noosa.firebaseapp.com',
   'https://innovatenoosa.com.au',
   'https://develop.innovatenoosa.com.au',
   'https://staging.innovatenoosa.com.au',
@@ -62,7 +62,7 @@ const corsOptions = {
       console.log((!origin)?'CORS direct hit':'CORS hit')
       callback(null, true)
     } else {
-      console.log('CORS miss')
+      console.log('CORS miss', origin)
       callback(new Error('Invalid CORS domain'), false)
     }
   },

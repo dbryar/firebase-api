@@ -58,7 +58,7 @@ export function isAuth(req:Request,res:Response,next:Function) {
       return next();
     })
     .catch(function(error) {
-      return respond(res, {code:401,message:'Token Error',data:`${error.message}`,trace:'GA.007'})
+      return respond(res, {code:401,message:'Unauthorized',data:`${error.message}`,trace:'GA.007'})
     });
   } catch (error) {
     try {

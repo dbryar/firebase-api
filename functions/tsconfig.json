@@ -1,16 +1,37 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "CommonJS",
+    "target": "ES2017",
+    "declaration": true,
+    "importHelpers": true,
+    "moduleResolution": "node",
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "outDir": "lib",
     "sourceMap": true,
     "strict": true,
-    "target": "es2017",
-    "lib": ["esnext.asynciterable"] 
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@test/*": ["tests/*"]
+    },
+    "lib": [
+      "ES2017",
+      "DOM",
+      "ScriptHost"
+    ],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "removeComments": true
   },
   "compileOnSave": true,
   "include": [
     "src"
+  ],
+  "exclude": [
+    "node_modules",
+    "lib"
   ]
 }
